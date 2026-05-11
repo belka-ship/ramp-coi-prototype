@@ -678,7 +678,7 @@ function renderCOICard(v, cmp) {
           <div class="coi-doc-meta">Bills from this vendor will be blocked until a current COI is provided.</div>
         </div>
         <div style="display: flex; gap: 8px;">
-          <button class="btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Request COI</button>
+          <button class="btn" onclick="openRequestCOIModal(${v.id})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Request COI</button>
           <button class="btn">Upload</button>
         </div>
       </div>`;
@@ -707,7 +707,7 @@ function renderCOICard(v, cmp) {
         <div class="coi-field"><div class="coi-field-label">Additional Insured</div><div class="coi-field-value">${c.ai ? 'Named' : 'Not named'}</div></div>
       </div>
       <div style="margin-top: 18px; display: flex; gap: 10px; justify-content: flex-end;">
-        ${c.status !== 'compliant' ? '<button class="btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Request updated COI</button>' : ''}
+        ${c.status !== 'compliant' ? `<button class="btn" onclick="openRequestCOIModal(${v.id})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Request updated COI</button>` : ''}
         <button class="btn">Replace</button>
       </div>`;
   }
@@ -827,7 +827,7 @@ function renderBillDetail() {
               ${c.status === 'non-compliant' ? `<strong>${v.name}</strong>'s certificate of insurance is below required coverage limits. See vendor record for details.` : ''}
               ${c.status === 'not-provided' ? `<strong>${v.name}</strong> has not provided a current certificate of insurance.` : ''}
               <div style="margin-top: 14px; display: flex; gap: 10px;">
-                <button class="btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Request updated COI</button>
+                <button class="btn" onclick="openRequestCOIModal(${v.id})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Request updated COI</button>
                 <button class="btn" onclick="openOverrideModal()">Request override approval</button>
                 <button class="btn ghost" onclick="STATE.view='vendors';STATE.vendorView='detail';STATE.selectedVendor=${v.id};render()">Open vendor</button>
               </div>
@@ -910,7 +910,105 @@ function openOverrideModal() {
   `;
   document.getElementById('modalBackdrop').classList.add('show');
 }
-function closeModal() { document.getElementById('modalBackdrop').classList.remove('show'); }
+function closeModal() {
+  document.getElementById('modalBackdrop').classList.remove('show');
+  document.getElementById('modal').style.width = '';
+}
+
+function buildCOIRequestSubject(v) {
+  const c = v.coi;
+  if (!c.uploadedAt) return `Certificate of Insurance needed before we can release payment — ${v.name}`;
+  if (c.status === 'expired') return `COI expired ${c.expiresAt} — renewed certificate needed`;
+  if (c.status === 'expiring') return `COI expiring ${c.expiresAt} — please send renewal`;
+  if (c.status === 'non-compliant') return `COI coverage below required limits — updated certificate needed`;
+  return `Updated Certificate of Insurance request — ${v.name}`;
+}
+
+function buildCOIRequestBody(v) {
+  const c = v.coi;
+  const reqs = STATE.requirements;
+  const company = 'Ridgeline Construction';
+  const sender = 'David Kim';
+  const senderRole = 'Controller';
+  const fmt = (n) => '$' + n.toLocaleString();
+
+  const reqLines = [];
+  reqLines.push(`General Liability: ${fmt(reqs.glPerOcc)} per occurrence / ${fmt(reqs.glAggregate)} aggregate`);
+  if (reqs.wcRequired) reqLines.push(`Workers Compensation: required`);
+  if (reqs.autoLiability > 0) reqLines.push(`Auto Liability: ${fmt(reqs.autoLiability)}`);
+  if (reqs.umbrella > 0) reqLines.push(`Umbrella / Excess: ${fmt(reqs.umbrella)}`);
+  const reqBlock = reqLines.map(l => `  • ${l}`).join('\n');
+
+  let opening, context;
+
+  if (!c.uploadedAt) {
+    opening = `Hi,\n\nBefore we can begin work together and release any payments, we need a current Certificate of Insurance on file for ${v.name}.`;
+    context = `\n\nPlease have your insurance broker send us an ACORD-25 certificate listing ${company} as Additional Insured, with the following minimum coverages:\n\n${reqBlock}\n\nOnce we have the certificate, your invoices will be released for payment automatically.`;
+  } else if (c.status === 'expired') {
+    opening = `Hi,\n\nThe Certificate of Insurance we have on file for ${v.name} expired on ${c.expiresAt}. We're not able to release any further payments until we receive a current COI.`;
+    context = `\n\nPlease have your broker send a renewed ACORD-25 listing ${company} as Additional Insured, with the following minimum coverages:\n\n${reqBlock}`;
+  } else if (c.status === 'expiring') {
+    opening = `Hi,\n\nA heads up — the Certificate of Insurance on file for ${v.name} is set to expire on ${c.expiresAt}. To avoid any interruption to payment, please send us the renewed certificate before then.`;
+    context = `\n\nThe renewed COI should list ${company} as Additional Insured, with the following minimum coverages:\n\n${reqBlock}`;
+  } else if (c.status === 'non-compliant') {
+    const issues = [];
+    if ((c.glPerOcc || 0) < reqs.glPerOcc) issues.push(`General Liability per-occurrence shows ${fmt(c.glPerOcc || 0)}; our minimum is ${fmt(reqs.glPerOcc)}`);
+    if ((c.glAggregate || 0) < reqs.glAggregate) issues.push(`General Liability aggregate shows ${fmt(c.glAggregate || 0)}; our minimum is ${fmt(reqs.glAggregate)}`);
+    if (reqs.wcRequired && !c.wc) issues.push(`Workers Compensation is not shown on the certificate`);
+    if ((c.autoLiability || 0) < reqs.autoLiability) issues.push(`Auto Liability shows ${fmt(c.autoLiability || 0)}; our minimum is ${fmt(reqs.autoLiability)}`);
+    if (reqs.umbrella > 0 && (c.umbrella || 0) < reqs.umbrella) issues.push(`Umbrella / Excess shows ${fmt(c.umbrella || 0)}; our minimum is ${fmt(reqs.umbrella)}`);
+    const issueBlock = issues.map(i => `  • ${i}`).join('\n');
+    opening = `Hi,\n\nThanks for sending over the Certificate of Insurance dated ${c.uploadedAt}. A few coverages on the certificate fall below the limits we require:`;
+    context = `\n\n${issueBlock}\n\nPlease have your broker issue an updated ACORD-25 that meets the minimums below and re-send it to us. Until we have a compliant certificate on file, your invoices will be held.\n\nFor reference, our minimum requirements:\n\n${reqBlock}`;
+  } else {
+    opening = `Hi,\n\nRequesting an updated Certificate of Insurance for ${v.name}.`;
+    context = `\n\nPlease have your broker send a current ACORD-25 listing ${company} as Additional Insured, with the following minimum coverages:\n\n${reqBlock}`;
+  }
+
+  return `${opening}${context}\n\nLet me know if you have any questions, and thanks for getting this over quickly.\n\nBest,\n${sender}\n${senderRole}, ${company}`;
+}
+
+function openRequestCOIModal(vendorId) {
+  const v = VENDORS.find(x => x.id === vendorId);
+  if (!v) return;
+  const subject = buildCOIRequestSubject(v);
+  const body = buildCOIRequestBody(v);
+  const esc = (s) => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const inputCss = "width: 100%; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; font-family: inherit; font-size: 13.5px; background: white; box-sizing: border-box;";
+  const labelCss = "display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); margin-bottom: 6px; font-family: 'Geist Mono', monospace;";
+
+  document.getElementById('modal').style.width = '640px';
+  document.getElementById('modal').innerHTML = `
+    <div class="modal-h">Request Certificate of Insurance</div>
+    <div class="modal-body">
+      <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 6px;">
+        <div>
+          <label style="${labelCss}">To</label>
+          <input type="text" value="${esc(v.email)}" style="${inputCss}">
+        </div>
+        <div>
+          <label style="${labelCss}">Subject</label>
+          <input type="text" value="${esc(subject)}" style="${inputCss}">
+        </div>
+        <div>
+          <label style="${labelCss}">Message</label>
+          <textarea style="${inputCss} min-height: 260px; line-height: 1.55; resize: vertical;">${esc(body)}</textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn dark" onclick="sendCOIRequest(${v.id})">Send request</button>
+    </div>
+  `;
+  document.getElementById('modalBackdrop').classList.add('show');
+}
+
+function sendCOIRequest(vendorId) {
+  const v = VENDORS.find(x => x.id === vendorId);
+  closeModal();
+  showToast('COI request sent to ' + (v ? v.email : 'vendor'));
+}
 
 function renderStubPage(key) {
   const titles = { expenses: 'Expenses', inbox: 'Inbox', insights: 'Insights', ramp: 'My Ramp', 'spend-programs': 'Spend programs', procurement: 'Procurement', accounting: 'Accounting', people: 'People' };

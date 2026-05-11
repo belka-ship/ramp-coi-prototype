@@ -292,10 +292,10 @@ const VENDORS = [
 const BILLS = [
   { id: 101, vendorId: 1, invoice: 'INV-8821', date: '2026-05-08', dueDate: '2026-06-07', amount: 18750.00, status: 'Approved', job: 'Springfield Med — Phase 2' },
   { id: 102, vendorId: 2, invoice: 'AE-2026-104', date: '2026-05-06', dueDate: '2026-06-05', amount: 24600.00, status: 'Pending review', job: 'Riverside Tower — Floor 8 MEP' },
-  { id: 103, vendorId: 3, invoice: 'GSC-04481', date: '2026-05-05', dueDate: '2026-06-04', amount: 51200.00, status: 'Blocked', job: 'Lakeview Plaza — Foundation' },
-  { id: 104, vendorId: 4, invoice: 'CD-7711', date: '2026-05-03', dueDate: '2026-06-02', amount: 8920.00, status: 'Blocked', job: 'Springfield Med — Interior' },
+  { id: 103, vendorId: 3, invoice: 'GSC-04481', date: '2026-05-05', dueDate: '2026-06-04', amount: 51200.00, status: 'Pending review', job: 'Lakeview Plaza — Foundation' },
+  { id: 104, vendorId: 4, invoice: 'CD-7711', date: '2026-05-03', dueDate: '2026-06-02', amount: 8920.00, status: 'Pending review', job: 'Springfield Med — Interior' },
   { id: 105, vendorId: 6, invoice: 'RR-3382', date: '2026-05-01', dueDate: '2026-05-31', amount: 22800.00, status: 'Approved', job: 'Lakeview Plaza — Roofing' },
-  { id: 106, vendorId: 5, invoice: 'SM-1187', date: '2026-04-29', dueDate: '2026-05-29', amount: 14250.00, status: 'Blocked', job: 'Riverside Tower — HVAC' },
+  { id: 106, vendorId: 5, invoice: 'SM-1187', date: '2026-04-29', dueDate: '2026-05-29', amount: 14250.00, status: 'Pending review', job: 'Riverside Tower — HVAC' },
   { id: 107, vendorId: 1, invoice: 'INV-8784', date: '2026-04-22', dueDate: '2026-05-22', amount: 9100.00, status: 'Paid', job: 'Springfield Med — Phase 2' },
   { id: 108, vendorId: 7, invoice: 'HD-PRO-554301', date: '2026-04-20', dueDate: '2026-05-20', amount: 3420.00, status: 'Paid', job: 'Various' }
 ];
@@ -497,7 +497,6 @@ function billStatusPill(status) {
   if (status === 'Paid') return '<span class="pill grey"><span class="dot"></span>Paid</span>';
   if (status === 'Approved') return '<span class="pill green"><span class="dot"></span>Approved</span>';
   if (status === 'Pending review') return '<span class="pill amber"><span class="dot"></span>Pending review</span>';
-  if (status === 'Blocked') return '<span class="pill red"><span class="dot"></span>Blocked — COI</span>';
   return '<span class="pill grey">'+status+'</span>';
 }
 
@@ -856,7 +855,6 @@ function renderBillList() {
   const showCOI = STATE.coiEnabled;
   const counts = {
     all: BILLS.length,
-    blocked: BILLS.filter(b => b.status === 'Blocked').length,
     review: BILLS.filter(b => b.status === 'Pending review').length,
     approved: BILLS.filter(b => b.status === 'Approved').length
   };
@@ -879,7 +877,6 @@ function renderBillList() {
     ${showCOI ? `
     <div class="filter-row">
       <span class="filter-chip active">All <span style="color: var(--ink-4); margin-left: 4px;">${counts.all}</span></span>
-      <span class="filter-chip">Blocked — COI <span style="color: var(--bg-red-text); margin-left: 4px;">${counts.blocked}</span></span>
       <span class="filter-chip">Pending review <span style="color: var(--ink-4); margin-left: 4px;">${counts.review}</span></span>
       <span class="filter-chip">Approved <span style="color: var(--ink-4); margin-left: 4px;">${counts.approved}</span></span>
     </div>` : ''}

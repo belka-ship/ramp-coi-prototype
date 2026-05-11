@@ -268,6 +268,8 @@ const STATE = {
   billView: 'list',
   selectedBill: null,
   coiEnabled: false,
+  editingCOI: null,
+  coiFeedback: null,
   requirements: {
     glPerOcc: 1000000, glAggregate: 2000000, wcRequired: true,
     autoLiability: 1000000, umbrella: 0, additionalInsured: true,
@@ -549,7 +551,7 @@ function renderVendorList() {
   `;
 }
 
-function openVendor(id) { STATE.selectedVendor = id; STATE.vendorView = 'detail'; STATE.view = 'vendors'; render(); }
+function openVendor(id) { STATE.selectedVendor = id; STATE.editingCOI = null; STATE.coiFeedback = null; STATE.vendorView = 'detail'; STATE.view = 'vendors'; render(); }
 
 function renderVendorDetail() {
   const v = VENDORS.find(x => x.id === STATE.selectedVendor);
@@ -656,6 +658,8 @@ function renderCOICard(v, cmp) {
   const c = v.coi;
   const reqs = STATE.requirements;
   const isRequired = c.required !== false;
+  const isEditing = STATE.editingCOI === v.id;
+  const showFeedback = STATE.coiFeedback === v.id;
   const valOrEm = (n) => n ? '$' + n.toLocaleString() : '—';
   const reqText = (n) => n ? ' (req $' + n.toLocaleString() + ')' : '';
 
@@ -683,6 +687,56 @@ function renderCOICard(v, cmp) {
         </div>
       </div>`;
   } else if (isRequired && c.uploadedAt) {
+    const inS = "border: 1px solid var(--line); border-radius: 4px; padding: 4px 8px; font-family: inherit; font-size: 13.5px; background: white; width: 140px; box-sizing: border-box;";
+    const selS = inS + " cursor: pointer;";
+
+    const fieldsRO = `
+      <div class="coi-fields">
+        <div class="coi-field"><div class="coi-field-label">Effective period</div><div class="coi-field-value">${c.uploadedAt} → ${c.expiresAt}</div></div>
+        <div class="coi-field"><div class="coi-field-label">Carrier</div><div class="coi-field-value">${c.carrier}</div></div>
+        <div class="coi-field"><div class="coi-field-label">GL — per occurrence</div><div class="coi-field-value">${valOrEm(c.glPerOcc)}<span class="coi-field-status ${cmp.glPerOcc ? 'ok' : 'bad'}">${cmp.glPerOcc ? '✓' : '✗' + reqText(reqs.glPerOcc)}</span></div></div>
+        <div class="coi-field"><div class="coi-field-label">GL — aggregate</div><div class="coi-field-value">${valOrEm(c.glAggregate)}<span class="coi-field-status ${cmp.glAggregate ? 'ok' : 'bad'}">${cmp.glAggregate ? '✓' : '✗' + reqText(reqs.glAggregate)}</span></div></div>
+        <div class="coi-field"><div class="coi-field-label">Workers Comp</div><div class="coi-field-value">${c.wc ? 'Present' : 'Missing'}<span class="coi-field-status ${cmp.wc ? 'ok' : 'bad'}">${cmp.wc ? '✓' : '✗ required'}</span></div></div>
+        <div class="coi-field"><div class="coi-field-label">Auto Liability</div><div class="coi-field-value">${valOrEm(c.autoLiability)}<span class="coi-field-status ${cmp.autoLiability ? 'ok' : 'bad'}">${cmp.autoLiability ? '✓' : '✗' + reqText(reqs.autoLiability)}</span></div></div>
+        <div class="coi-field"><div class="coi-field-label">Umbrella / Excess</div><div class="coi-field-value">${valOrEm(c.umbrella)}<span class="coi-field-status ${reqs.umbrella === 0 || cmp.umbrella ? 'ok' : 'bad'}">${reqs.umbrella === 0 ? '—' : (cmp.umbrella ? '✓' : '✗' + reqText(reqs.umbrella))}</span></div></div>
+        <div class="coi-field"><div class="coi-field-label">Additional Insured</div><div class="coi-field-value">${c.ai ? 'Named' : 'Not named'}</div></div>
+      </div>`;
+
+    const fieldsEdit = `
+      <div class="coi-fields">
+        <div class="coi-field"><div class="coi-field-label">Effective period</div><div class="coi-field-value" style="display: flex; gap: 8px; align-items: center;"><input data-coi-field="uploadedAt" value="${c.uploadedAt}" style="${inS} width: 130px;"><span style="color: var(--ink-3);">→</span><input data-coi-field="expiresAt" value="${c.expiresAt}" style="${inS} width: 130px;"></div></div>
+        <div class="coi-field"><div class="coi-field-label">Carrier</div><div class="coi-field-value"><input data-coi-field="carrier" value="${c.carrier || ''}" style="${inS} width: 200px;"></div></div>
+        <div class="coi-field"><div class="coi-field-label">GL — per occurrence</div><div class="coi-field-value"><input data-coi-field="glPerOcc" value="${c.glPerOcc || ''}" style="${inS}"></div></div>
+        <div class="coi-field"><div class="coi-field-label">GL — aggregate</div><div class="coi-field-value"><input data-coi-field="glAggregate" value="${c.glAggregate || ''}" style="${inS}"></div></div>
+        <div class="coi-field"><div class="coi-field-label">Workers Comp</div><div class="coi-field-value"><select data-coi-field="wc" style="${selS}"><option value="true" ${c.wc ? 'selected' : ''}>Present</option><option value="false" ${!c.wc ? 'selected' : ''}>Missing</option></select></div></div>
+        <div class="coi-field"><div class="coi-field-label">Auto Liability</div><div class="coi-field-value"><input data-coi-field="autoLiability" value="${c.autoLiability || ''}" style="${inS}"></div></div>
+        <div class="coi-field"><div class="coi-field-label">Umbrella / Excess</div><div class="coi-field-value"><input data-coi-field="umbrella" value="${c.umbrella || ''}" style="${inS}"></div></div>
+        <div class="coi-field"><div class="coi-field-label">Additional Insured</div><div class="coi-field-value"><select data-coi-field="ai" style="${selS}"><option value="true" ${c.ai ? 'selected' : ''}>Named</option><option value="false" ${!c.ai ? 'selected' : ''}>Not named</option></select></div></div>
+      </div>`;
+
+    const buttonsRO = `
+      <div style="margin-top: 18px; display: flex; gap: 10px; justify-content: flex-end;">
+        <button class="btn" onclick="openRequestCOIModal(${v.id})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Request updated COI</button>
+        <button class="btn" onclick="startEditCOI(${v.id})">Edit</button>
+        <button class="btn" onclick="deleteCOI(${v.id})" style="color: var(--bg-red-text);">Delete COI</button>
+      </div>`;
+
+    const buttonsEdit = `
+      <div style="margin-top: 18px; display: flex; gap: 10px; justify-content: flex-end;">
+        <button class="btn ghost" onclick="cancelEditCOI()">Cancel</button>
+        <button class="btn dark" onclick="saveCOI(${v.id})">Save</button>
+      </div>`;
+
+    const feedbackPanel = (showFeedback && !isEditing) ? `
+      <div style="margin-top: 16px; padding: 14px 16px; background: var(--bg-search); border-radius: 8px; border: 1px solid var(--line);">
+        <div style="font-weight: 500; font-size: 13px; margin-bottom: 4px;">Tell us why you changed the values</div>
+        <div style="color: var(--ink-3); font-size: 12.5px; margin-bottom: 10px;">Help the agent learn — what did it miss or get wrong on the extraction?</div>
+        <textarea id="coi-feedback-text" placeholder="e.g. The agent missed the umbrella endorsement on page 3 of the PDF…" style="width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; font-family: inherit; font-size: 13px; min-height: 64px; resize: vertical; box-sizing: border-box;"></textarea>
+        <div style="display: flex; justify-content: flex-end; margin-top: 8px;">
+          <button class="btn sm dark" onclick="sendCOIFeedback()">Send feedback</button>
+        </div>
+      </div>` : '';
+
     body = `
       <div class="ai-banner" style="margin-top: 18px;">
         <div class="ai-banner-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
@@ -696,20 +750,9 @@ function renderCOICard(v, cmp) {
         </div>
         <button class="btn sm">View PDF</button>
       </div>
-      <div class="coi-fields">
-        <div class="coi-field"><div class="coi-field-label">Effective period</div><div class="coi-field-value">${c.uploadedAt} → ${c.expiresAt}</div></div>
-        <div class="coi-field"><div class="coi-field-label">Carrier</div><div class="coi-field-value">${c.carrier}</div></div>
-        <div class="coi-field"><div class="coi-field-label">GL — per occurrence</div><div class="coi-field-value">${valOrEm(c.glPerOcc)}<span class="coi-field-status ${cmp.glPerOcc ? 'ok' : 'bad'}">${cmp.glPerOcc ? '✓' : '✗' + reqText(reqs.glPerOcc)}</span></div></div>
-        <div class="coi-field"><div class="coi-field-label">GL — aggregate</div><div class="coi-field-value">${valOrEm(c.glAggregate)}<span class="coi-field-status ${cmp.glAggregate ? 'ok' : 'bad'}">${cmp.glAggregate ? '✓' : '✗' + reqText(reqs.glAggregate)}</span></div></div>
-        <div class="coi-field"><div class="coi-field-label">Workers Comp</div><div class="coi-field-value">${c.wc ? 'Present' : 'Missing'}<span class="coi-field-status ${cmp.wc ? 'ok' : 'bad'}">${cmp.wc ? '✓' : '✗ required'}</span></div></div>
-        <div class="coi-field"><div class="coi-field-label">Auto Liability</div><div class="coi-field-value">${valOrEm(c.autoLiability)}<span class="coi-field-status ${cmp.autoLiability ? 'ok' : 'bad'}">${cmp.autoLiability ? '✓' : '✗' + reqText(reqs.autoLiability)}</span></div></div>
-        <div class="coi-field"><div class="coi-field-label">Umbrella / Excess</div><div class="coi-field-value">${valOrEm(c.umbrella)}<span class="coi-field-status ${reqs.umbrella === 0 || cmp.umbrella ? 'ok' : 'bad'}">${reqs.umbrella === 0 ? '—' : (cmp.umbrella ? '✓' : '✗' + reqText(reqs.umbrella))}</span></div></div>
-        <div class="coi-field"><div class="coi-field-label">Additional Insured</div><div class="coi-field-value">${c.ai ? 'Named' : 'Not named'}</div></div>
-      </div>
-      <div style="margin-top: 18px; display: flex; gap: 10px; justify-content: flex-end;">
-        ${c.status !== 'compliant' ? `<button class="btn" onclick="openRequestCOIModal(${v.id})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Request updated COI</button>` : ''}
-        <button class="btn">Replace</button>
-      </div>`;
+      ${isEditing ? fieldsEdit : fieldsRO}
+      ${isEditing ? buttonsEdit : buttonsRO}
+      ${feedbackPanel}`;
   }
 
   return `
@@ -723,12 +766,86 @@ function renderCOICard(v, cmp) {
   `;
 }
 
+function computeCOIStatus(v) {
+  const c = v.coi;
+  const reqs = STATE.requirements;
+  if (!c.uploadedAt) return 'not-provided';
+  const today = new Date();
+  const expires = new Date(c.expiresAt);
+  const daysToExpire = Math.floor((expires - today) / 86400000);
+  if (daysToExpire < 0) return 'expired';
+  const belowLimits =
+    (c.glPerOcc || 0) < reqs.glPerOcc ||
+    (c.glAggregate || 0) < reqs.glAggregate ||
+    (reqs.wcRequired && !c.wc) ||
+    (c.autoLiability || 0) < reqs.autoLiability ||
+    (reqs.umbrella > 0 && (c.umbrella || 0) < reqs.umbrella);
+  if (belowLimits) return 'non-compliant';
+  if (daysToExpire <= reqs.expirationBuffer) return 'expiring';
+  return 'compliant';
+}
+
+function startEditCOI(id) {
+  STATE.editingCOI = id;
+  STATE.coiFeedback = null;
+  render();
+}
+
+function cancelEditCOI() {
+  STATE.editingCOI = null;
+  render();
+}
+
+function saveCOI(id) {
+  const v = VENDORS.find(x => x.id === id);
+  if (!v) return;
+  document.querySelectorAll('[data-coi-field]').forEach(el => {
+    const field = el.dataset.coiField;
+    const val = el.value;
+    if (['glPerOcc', 'glAggregate', 'autoLiability', 'umbrella'].includes(field)) {
+      v.coi[field] = parseInt(String(val).replace(/[$,\s]/g, '')) || 0;
+    } else if (['wc', 'ai'].includes(field)) {
+      v.coi[field] = val === 'true';
+    } else {
+      v.coi[field] = val;
+    }
+  });
+  v.coi.status = computeCOIStatus(v);
+  STATE.editingCOI = null;
+  STATE.coiFeedback = id;
+  render();
+}
+
+function deleteCOI(id) {
+  const v = VENDORS.find(x => x.id === id);
+  if (!v) return;
+  v.coi.uploadedAt = null;
+  v.coi.expiresAt = null;
+  v.coi.carrier = null;
+  v.coi.glPerOcc = null;
+  v.coi.glAggregate = null;
+  v.coi.wc = null;
+  v.coi.autoLiability = null;
+  v.coi.umbrella = null;
+  v.coi.ai = null;
+  v.coi.status = 'not-provided';
+  STATE.editingCOI = null;
+  STATE.coiFeedback = null;
+  render();
+  showToast('COI deleted · status set to Not provided');
+}
+
+function sendCOIFeedback() {
+  STATE.coiFeedback = null;
+  render();
+  showToast('Feedback sent — thanks for helping the agent improve');
+}
+
 function toggleVendorCOIReq(id) {
   const v = VENDORS.find(x => x.id === id);
   if (!v) return;
   v.coi.required = v.coi.required === false ? true : false;
-  if (v.coi.required && !v.coi.status) v.coi.status = 'not-provided';
-  if (v.coi.required && v.coi.status === 'not-applicable') v.coi.status = v.coi.uploadedAt ? 'compliant' : 'not-provided';
+  if (v.coi.required) v.coi.status = computeCOIStatus(v);
   render();
 }
 

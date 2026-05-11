@@ -276,15 +276,15 @@ const STATE = {
 };
 
 const VENDORS = [
-  { id: 1, name: 'Lehman Plumbing LLC', type: 'Subcontractor — Plumbing', email: 'ap@lehmanplumbing.com', spendYTD: 184500, coi: { status: 'compliant', uploadedAt: '2026-02-10', expiresAt: '2027-01-15', carrier: 'Travelers', glPerOcc: 1000000, glAggregate: 2000000, wc: true, autoLiability: 1000000, umbrella: 2000000, ai: true } },
-  { id: 2, name: 'Apex Electrical', type: 'Subcontractor — Electrical', email: 'billing@apexelec.com', spendYTD: 312000, coi: { status: 'expiring', uploadedAt: '2025-06-12', expiresAt: '2026-06-12', carrier: 'Hartford', glPerOcc: 1000000, glAggregate: 2000000, wc: true, autoLiability: 1000000, umbrella: 1000000, ai: true } },
-  { id: 3, name: 'Granite State Concrete', type: 'Subcontractor — Concrete', email: 'office@granitestate.com', spendYTD: 467800, coi: { status: 'expired', uploadedAt: '2024-11-05', expiresAt: '2025-11-05', carrier: 'Liberty Mutual', glPerOcc: 1000000, glAggregate: 2000000, wc: true, autoLiability: 1000000, umbrella: 0, ai: true } },
-  { id: 4, name: 'Coastal Drywall Co.', type: 'Subcontractor — Drywall', email: 'admin@coastaldrywall.com', spendYTD: 89200, coi: { status: 'non-compliant', uploadedAt: '2026-03-20', expiresAt: '2027-02-28', carrier: 'Zurich', glPerOcc: 500000, glAggregate: 1000000, wc: true, autoLiability: 500000, umbrella: 0, ai: true } },
-  { id: 5, name: 'Summit Mechanical', type: 'Subcontractor — HVAC', email: 'jobs@summitmech.com', spendYTD: 245000, coi: { status: 'not-provided', uploadedAt: null, expiresAt: null, carrier: null } },
-  { id: 6, name: 'Riverbend Roofing', type: 'Subcontractor — Roofing', email: 'kelly@riverbendroof.com', spendYTD: 156400, coi: { status: 'compliant', uploadedAt: '2026-01-04', expiresAt: '2026-12-15', carrier: 'CNA', glPerOcc: 2000000, glAggregate: 4000000, wc: true, autoLiability: 1000000, umbrella: 5000000, ai: true } },
-  { id: 7, name: 'Home Depot Pro', type: 'Material Supplier', email: 'commercial@homedepot.com', spendYTD: 67800, coi: { status: 'not-applicable' } },
-  { id: 8, name: 'Ferguson Plumbing Supply', type: 'Material Supplier', email: 'ar@ferguson.com', spendYTD: 124000, coi: { status: 'not-applicable' } },
-  { id: 9, name: 'Sunbelt Rentals', type: 'Equipment Rental', email: 'rentals@sunbelt.com', spendYTD: 41200, coi: { status: 'not-applicable' } }
+  { id: 1, name: 'Lehman Plumbing LLC', type: 'Subcontractor — Plumbing', email: 'ap@lehmanplumbing.com', spendYTD: 184500, coi: { required: true, status: 'compliant', uploadedAt: '2026-02-10', expiresAt: '2027-01-15', carrier: 'Travelers', glPerOcc: 1000000, glAggregate: 2000000, wc: true, autoLiability: 1000000, umbrella: 2000000, ai: true } },
+  { id: 2, name: 'Apex Electrical', type: 'Subcontractor — Electrical', email: 'billing@apexelec.com', spendYTD: 312000, coi: { required: true, status: 'expiring', uploadedAt: '2025-06-12', expiresAt: '2026-06-12', carrier: 'Hartford', glPerOcc: 1000000, glAggregate: 2000000, wc: true, autoLiability: 1000000, umbrella: 1000000, ai: true } },
+  { id: 3, name: 'Granite State Concrete', type: 'Subcontractor — Concrete', email: 'office@granitestate.com', spendYTD: 467800, coi: { required: true, status: 'expired', uploadedAt: '2024-11-05', expiresAt: '2025-11-05', carrier: 'Liberty Mutual', glPerOcc: 1000000, glAggregate: 2000000, wc: true, autoLiability: 1000000, umbrella: 0, ai: true } },
+  { id: 4, name: 'Coastal Drywall Co.', type: 'Subcontractor — Drywall', email: 'admin@coastaldrywall.com', spendYTD: 89200, coi: { required: true, status: 'non-compliant', uploadedAt: '2026-03-20', expiresAt: '2027-02-28', carrier: 'Zurich', glPerOcc: 500000, glAggregate: 1000000, wc: true, autoLiability: 500000, umbrella: 0, ai: true } },
+  { id: 5, name: 'Summit Mechanical', type: 'Subcontractor — HVAC', email: 'jobs@summitmech.com', spendYTD: 245000, coi: { required: true, status: 'not-provided', uploadedAt: null, expiresAt: null, carrier: null } },
+  { id: 6, name: 'Riverbend Roofing', type: 'Subcontractor — Roofing', email: 'kelly@riverbendroof.com', spendYTD: 156400, coi: { required: true, status: 'compliant', uploadedAt: '2026-01-04', expiresAt: '2026-12-15', carrier: 'CNA', glPerOcc: 2000000, glAggregate: 4000000, wc: true, autoLiability: 1000000, umbrella: 5000000, ai: true } },
+  { id: 7, name: 'Home Depot Pro', type: 'Material Supplier', email: 'commercial@homedepot.com', spendYTD: 67800, coi: { required: false, status: 'not-applicable' } },
+  { id: 8, name: 'Ferguson Plumbing Supply', type: 'Material Supplier', email: 'ar@ferguson.com', spendYTD: 124000, coi: { required: false, status: 'not-applicable' } },
+  { id: 9, name: 'Sunbelt Rentals', type: 'Equipment Rental', email: 'rentals@sunbelt.com', spendYTD: 41200, coi: { required: false, status: 'not-applicable' } }
 ];
 
 const BILLS = [
@@ -475,6 +475,10 @@ function goSettings(view, sub) {
   render();
 }
 
+function effectiveStatus(v) {
+  return v.coi.required === false ? 'not-applicable' : v.coi.status;
+}
+
 function statusPill(status) {
   switch(status) {
     case 'compliant': return '<span class="pill green"><span class="dot"></span>Compliant</span>';
@@ -499,9 +503,9 @@ function renderVendorList() {
   const showCOI = STATE.coiEnabled;
   const counts = {
     all: VENDORS.length,
-    compliant: VENDORS.filter(v => v.coi.status === 'compliant').length,
-    attention: VENDORS.filter(v => ['expiring','expired','non-compliant','not-provided'].includes(v.coi.status)).length,
-    na: VENDORS.filter(v => v.coi.status === 'not-applicable').length
+    compliant: VENDORS.filter(v => effectiveStatus(v) === 'compliant').length,
+    attention: VENDORS.filter(v => ['expiring','expired','non-compliant','not-provided'].includes(effectiveStatus(v))).length,
+    na: VENDORS.filter(v => effectiveStatus(v) === 'not-applicable').length
   };
 
   return `
@@ -536,8 +540,8 @@ function renderVendorList() {
           <tr onclick="openVendor(${v.id})">
             <td><div class="vendor-name">${v.name}</div><div class="secondary">${v.email}</div></td>
             <td>${v.type}</td>
-            ${showCOI ? `<td>${statusPill(v.coi.status)}</td>` : ''}
-            ${showCOI ? `<td class="num secondary">${v.coi.expiresAt || '—'}</td>` : ''}
+            ${showCOI ? `<td>${statusPill(effectiveStatus(v))}</td>` : ''}
+            ${showCOI ? `<td class="num secondary">${v.coi.required === false ? '—' : (v.coi.expiresAt || '—')}</td>` : ''}
             <td class="amount">$${v.spendYTD.toLocaleString()}</td>
           </tr>`).join('')}
       </tbody>
@@ -550,7 +554,7 @@ function openVendor(id) { STATE.selectedVendor = id; STATE.vendorView = 'detail'
 function renderVendorDetail() {
   const v = VENDORS.find(x => x.id === STATE.selectedVendor);
   if (!v) return renderVendorList();
-  const showCOI = STATE.coiEnabled && v.coi.status !== 'not-applicable';
+  const showCOI = STATE.coiEnabled;
   const c = v.coi;
   const reqs = STATE.requirements;
   const meets = (val, min) => (val || 0) >= min;
@@ -570,7 +574,7 @@ function renderVendorDetail() {
       <span style="color: var(--ink-3); font-size: 13.5px;">${v.type}</span>
       <span style="color: var(--ink-5);">·</span>
       <span style="color: var(--ink-3); font-size: 13.5px;">${v.email}</span>
-      ${showCOI ? `<span style="margin-left: 12px;">${statusPill(v.coi.status)}</span>` : ''}
+      ${showCOI ? `<span style="margin-left: 12px;">${statusPill(effectiveStatus(v))}</span>` : ''}
     </div>
 
     <div class="page-tabs">
@@ -651,60 +655,81 @@ function renderVendorDetail() {
 function renderCOICard(v, cmp) {
   const c = v.coi;
   const reqs = STATE.requirements;
-  if (!c.uploadedAt) {
-    return `
-      <div class="detail-card">
-        <div class="detail-card-h">Certificate of Insurance ${statusPill(c.status)}</div>
-        <div class="detail-card-body">
-          <div class="coi-doc-preview">
-            <div class="coi-doc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-            <div style="flex: 1;">
-              <div class="coi-doc-name">No COI on file</div>
-              <div class="coi-doc-meta">Bills from this vendor will be blocked until a current COI is provided.</div>
-            </div>
-            <div style="display: flex; gap: 8px;">
-              <button class="btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Request COI</button>
-              <button class="btn">Upload</button>
-            </div>
-          </div>
-        </div>
-      </div>`;
-  }
+  const isRequired = c.required !== false;
   const valOrEm = (n) => n ? '$' + n.toLocaleString() : '—';
   const reqText = (n) => n ? ' (req $' + n.toLocaleString() + ')' : '';
+
+  const toggleRow = `
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 24px;">
+      <div>
+        <div style="font-weight: 500; font-size: 14px;">Vendor requires COI</div>
+        <div style="color: var(--ink-3); font-size: 13px; margin-top: 4px;">When off, this vendor is marked Not applicable and bills aren't checked against COI requirements.</div>
+      </div>
+      <div class="toggle ${isRequired ? 'on' : ''}" onclick="toggleVendorCOIReq(${v.id})"></div>
+    </div>`;
+
+  let body = '';
+  if (isRequired && !c.uploadedAt) {
+    body = `
+      <div class="coi-doc-preview" style="margin-top: 18px;">
+        <div class="coi-doc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        <div style="flex: 1;">
+          <div class="coi-doc-name">No COI on file</div>
+          <div class="coi-doc-meta">Bills from this vendor will be blocked until a current COI is provided.</div>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Request COI</button>
+          <button class="btn">Upload</button>
+        </div>
+      </div>`;
+  } else if (isRequired && c.uploadedAt) {
+    body = `
+      <div class="ai-banner" style="margin-top: 18px;">
+        <div class="ai-banner-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+        <strong>Auto-extracted from inbox</strong> · 8 fields read from ACORD-25 form — no manual entry needed
+      </div>
+      <div class="coi-doc-preview">
+        <div class="coi-doc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        <div style="flex: 1;">
+          <div class="coi-doc-name">ACORD_25_${v.name.split(' ')[0]}_${c.expiresAt.split('-')[0]}.pdf</div>
+          <div class="coi-doc-meta">Received ${c.uploadedAt} from ${v.email} · Carrier: ${c.carrier}</div>
+        </div>
+        <button class="btn sm">View PDF</button>
+      </div>
+      <div class="coi-fields">
+        <div class="coi-field"><div class="coi-field-label">Effective period</div><div class="coi-field-value">${c.uploadedAt} → ${c.expiresAt}</div></div>
+        <div class="coi-field"><div class="coi-field-label">Carrier</div><div class="coi-field-value">${c.carrier}</div></div>
+        <div class="coi-field"><div class="coi-field-label">GL — per occurrence</div><div class="coi-field-value">${valOrEm(c.glPerOcc)}<span class="coi-field-status ${cmp.glPerOcc ? 'ok' : 'bad'}">${cmp.glPerOcc ? '✓' : '✗' + reqText(reqs.glPerOcc)}</span></div></div>
+        <div class="coi-field"><div class="coi-field-label">GL — aggregate</div><div class="coi-field-value">${valOrEm(c.glAggregate)}<span class="coi-field-status ${cmp.glAggregate ? 'ok' : 'bad'}">${cmp.glAggregate ? '✓' : '✗' + reqText(reqs.glAggregate)}</span></div></div>
+        <div class="coi-field"><div class="coi-field-label">Workers Comp</div><div class="coi-field-value">${c.wc ? 'Present' : 'Missing'}<span class="coi-field-status ${cmp.wc ? 'ok' : 'bad'}">${cmp.wc ? '✓' : '✗ required'}</span></div></div>
+        <div class="coi-field"><div class="coi-field-label">Auto Liability</div><div class="coi-field-value">${valOrEm(c.autoLiability)}<span class="coi-field-status ${cmp.autoLiability ? 'ok' : 'bad'}">${cmp.autoLiability ? '✓' : '✗' + reqText(reqs.autoLiability)}</span></div></div>
+        <div class="coi-field"><div class="coi-field-label">Umbrella / Excess</div><div class="coi-field-value">${valOrEm(c.umbrella)}<span class="coi-field-status ${reqs.umbrella === 0 || cmp.umbrella ? 'ok' : 'bad'}">${reqs.umbrella === 0 ? '—' : (cmp.umbrella ? '✓' : '✗' + reqText(reqs.umbrella))}</span></div></div>
+        <div class="coi-field"><div class="coi-field-label">Additional Insured</div><div class="coi-field-value">${c.ai ? 'Named' : 'Not named'}</div></div>
+      </div>
+      <div style="margin-top: 18px; display: flex; gap: 10px; justify-content: flex-end;">
+        ${c.status !== 'compliant' ? '<button class="btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Request updated COI</button>' : ''}
+        <button class="btn">Replace</button>
+      </div>`;
+  }
+
   return `
     <div class="detail-card">
-      <div class="detail-card-h">Certificate of Insurance ${statusPill(c.status)}</div>
+      <div class="detail-card-h">Certificate of Insurance ${statusPill(effectiveStatus(v))}</div>
       <div class="detail-card-body">
-        <div class="ai-banner">
-          <div class="ai-banner-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-          <strong>Auto-extracted from inbox</strong> · 8 fields read from ACORD-25 form — no manual entry needed
-        </div>
-        <div class="coi-doc-preview">
-          <div class="coi-doc-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-          <div style="flex: 1;">
-            <div class="coi-doc-name">ACORD_25_${v.name.split(' ')[0]}_${c.expiresAt.split('-')[0]}.pdf</div>
-            <div class="coi-doc-meta">Received ${c.uploadedAt} from ${v.email} · Carrier: ${c.carrier}</div>
-          </div>
-          <button class="btn sm">View PDF</button>
-        </div>
-        <div class="coi-fields">
-          <div class="coi-field"><div class="coi-field-label">Effective period</div><div class="coi-field-value">${c.uploadedAt} → ${c.expiresAt}</div></div>
-          <div class="coi-field"><div class="coi-field-label">Carrier</div><div class="coi-field-value">${c.carrier}</div></div>
-          <div class="coi-field"><div class="coi-field-label">GL — per occurrence</div><div class="coi-field-value">${valOrEm(c.glPerOcc)}<span class="coi-field-status ${cmp.glPerOcc ? 'ok' : 'bad'}">${cmp.glPerOcc ? '✓' : '✗' + reqText(reqs.glPerOcc)}</span></div></div>
-          <div class="coi-field"><div class="coi-field-label">GL — aggregate</div><div class="coi-field-value">${valOrEm(c.glAggregate)}<span class="coi-field-status ${cmp.glAggregate ? 'ok' : 'bad'}">${cmp.glAggregate ? '✓' : '✗' + reqText(reqs.glAggregate)}</span></div></div>
-          <div class="coi-field"><div class="coi-field-label">Workers Comp</div><div class="coi-field-value">${c.wc ? 'Present' : 'Missing'}<span class="coi-field-status ${cmp.wc ? 'ok' : 'bad'}">${cmp.wc ? '✓' : '✗ required'}</span></div></div>
-          <div class="coi-field"><div class="coi-field-label">Auto Liability</div><div class="coi-field-value">${valOrEm(c.autoLiability)}<span class="coi-field-status ${cmp.autoLiability ? 'ok' : 'bad'}">${cmp.autoLiability ? '✓' : '✗' + reqText(reqs.autoLiability)}</span></div></div>
-          <div class="coi-field"><div class="coi-field-label">Umbrella / Excess</div><div class="coi-field-value">${valOrEm(c.umbrella)}<span class="coi-field-status ${reqs.umbrella === 0 || cmp.umbrella ? 'ok' : 'bad'}">${reqs.umbrella === 0 ? '—' : (cmp.umbrella ? '✓' : '✗' + reqText(reqs.umbrella))}</span></div></div>
-          <div class="coi-field"><div class="coi-field-label">Additional Insured</div><div class="coi-field-value">${c.ai ? 'Named' : 'Not named'}<span class="coi-field-status ${cmp.ai ? 'ok' : 'bad'}">${cmp.ai ? '✓' : '✗ required'}</span></div></div>
-        </div>
-        <div style="margin-top: 18px; display: flex; gap: 10px; justify-content: flex-end;">
-          ${c.status !== 'compliant' ? '<button class="btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Request updated COI</button>' : ''}
-          <button class="btn">Replace</button>
-        </div>
+        ${toggleRow}
+        ${body}
       </div>
     </div>
   `;
+}
+
+function toggleVendorCOIReq(id) {
+  const v = VENDORS.find(x => x.id === id);
+  if (!v) return;
+  v.coi.required = v.coi.required === false ? true : false;
+  if (v.coi.required && !v.coi.status) v.coi.status = 'not-provided';
+  if (v.coi.required && v.coi.status === 'not-applicable') v.coi.status = v.coi.uploadedAt ? 'compliant' : 'not-provided';
+  render();
 }
 
 function renderBillList() {
@@ -754,7 +779,7 @@ function renderBillList() {
               <td><div class="vendor-name">${v.name}</div></td>
               <td class="secondary">${b.invoice}</td>
               <td class="secondary">${b.job}</td>
-              ${showCOI ? `<td>${statusPill(v.coi.status)}</td>` : ''}
+              ${showCOI ? `<td>${statusPill(effectiveStatus(v))}</td>` : ''}
               <td class="num secondary">${b.dueDate}</td>
               <td class="amount">$${b.amount.toLocaleString(undefined, {minimumFractionDigits:2})}</td>
               <td>${billStatusPill(b.status)}</td>
@@ -771,7 +796,7 @@ function renderBillDetail() {
   const b = BILLS.find(x => x.id === STATE.selectedBill);
   if (!b) return renderBillList();
   const v = VENDORS.find(x => x.id === b.vendorId);
-  const showCOI = STATE.coiEnabled && v.coi.status !== 'not-applicable';
+  const showCOI = STATE.coiEnabled && effectiveStatus(v) !== 'not-applicable';
   const c = v.coi;
 
   return `
@@ -837,7 +862,7 @@ function renderBillDetail() {
       <div>
         ${showCOI ? `
         <div class="detail-card">
-          <div class="detail-card-h">COI status ${statusPill(c.status)}</div>
+          <div class="detail-card-h">COI status ${statusPill(effectiveStatus(v))}</div>
           <div class="detail-card-body">
             ${c.uploadedAt ? `
               <div class="detail-row"><span class="detail-row-k">On file</span><span class="detail-row-v">${c.uploadedAt}</span></div>

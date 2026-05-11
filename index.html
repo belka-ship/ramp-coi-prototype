@@ -573,14 +573,18 @@ function renderVendorDetail() {
       ${showCOI ? `<span style="margin-left: 12px;">${statusPill(v.coi.status)}</span>` : ''}
     </div>
 
+    <div class="page-tabs">
+      <div class="page-tab active">Vendor details</div>
+      <div class="page-tab">Documents</div>
+      <div class="page-tab">Payment details</div>
+      <div class="page-tab">Tax info</div>
+      <div class="page-tab">Bill accounting</div>
+      <div class="page-tab">Custom fields</div>
+      <div class="page-tab">Activity</div>
+    </div>
+
     <div class="detail-layout">
       <div>
-        ${showCOI ? renderCOICard(v, cmp) : `
-          <div class="detail-card">
-            <div class="detail-card-h">Activity</div>
-            <div class="detail-card-body" style="color: var(--ink-3);">Recent bills and payments for this vendor will appear here.</div>
-          </div>`}
-
         <div class="detail-card">
           <div class="detail-card-h">Recent bills</div>
           <table class="data-table" style="border-radius: 0;">
@@ -597,6 +601,8 @@ function renderVendorDetail() {
             </tbody>
           </table>
         </div>
+
+        ${showCOI ? renderCOICard(v, cmp) : ''}
       </div>
 
       <div>

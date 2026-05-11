@@ -471,7 +471,7 @@ function toggleCOI() {
   if (STATE.coiEnabled) showToast('COI compliance enabled');
 }
 function toggleReq(field) { STATE.requirements[field] = !STATE.requirements[field]; render(); }
-function savePolicy() { showToast('Policy saved · ' + VENDORS.filter(v => v.coi.status !== 'not-applicable').length + ' subcontractor vendors re-evaluated'); }
+function savePolicy() { showToast('Policy saved'); }
 
 function goSettings(view, sub) {
   STATE.view = 'settings';

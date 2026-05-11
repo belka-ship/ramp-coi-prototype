@@ -444,10 +444,6 @@ function renderExpensePolicyVendors() {
           <div class="input-prefix"><span class="input-prefix-label">$</span><input type="text" value="${reqs.umbrella.toLocaleString()}" data-field="umbrella"></div>
         </div>
         <div class="setting-row">
-          <div class="setting-row-text"><div class="setting-row-label">Additional Insured status</div><div class="setting-row-desc">Your company must be named as Additional Insured on the policy.</div></div>
-          <div class="toggle ${reqs.additionalInsured ? 'on' : ''}" onclick="toggleReq('additionalInsured')"></div>
-        </div>
-        <div class="setting-row">
           <div class="setting-row-text"><div class="setting-row-label">Expiration alert window</div><div class="setting-row-desc">Mark COIs as "expiring" when expiration falls within this many days.</div></div>
           <div class="input-prefix" style="width: 130px;"><input type="text" value="${reqs.expirationBuffer}" data-field="expirationBuffer"><span class="input-prefix-label" style="border-right: none; border-left: 1px solid var(--line);">days</span></div>
         </div>
